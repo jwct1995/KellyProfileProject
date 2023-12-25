@@ -167,7 +167,7 @@ $( document ).ready(function()
 <body>
     <div>
         <button id="menuregbtn" name="menubtn" >Register</button>
-        <button id="menulogbtn" name="menubtn" >Login Profile</button>
+        <button id="menulogbtn" name="menubtn" >Profile Login</button>
     </div>
 <center>
 
