@@ -313,10 +313,18 @@ $( document ).ready(function()
 {
     $(":input").on("keyup change", function(e) 
     {
-        if($("[name='regemail']").val() && $("[name='regpassword']").val()==$("[name='regcpassword']").val()&&$("[name='regfname']").val() &&$("[name='regphone']").val() )
+        var upperCase= new RegExp('[A-Z]');
+        var lowerCase= new RegExp('[a-z]');
+        var numbers = new RegExp('[0-9]');
+
+        if($("[name='regemail']").val().length>=5 && $("[name='regemail']").val().indexOf("@")!= -1 && $("[name='regpassword']").val()==$("[name='regcpassword']").val()&& $("[name='regpassword']").val().length>=6 &&$("[name='regpassword']").val().match(upperCase) && $("[name='regpassword']").val().match(lowerCase) && $("[name='regpassword']").val().match(numbers) && $("[name='regfname']").val().length>=3 &&$("[name='regphone']").val().length>=3 )
             $("[name='regsbtn']").attr("disabled", false);
         else
             $("[name='regsbtn']").attr("disabled", true);
+
+            
+
+            
     });
 
     $(":input").on("keyup change", function(e) 
@@ -382,11 +390,11 @@ $( document ).ready(function()
         </tr>
         <tr>
             <td>Email</td>
-            <td><input type="text" name="regemail"></td>
+            <td><input type="text" name="regemail"> must have "@" with min 5 character</td>
         </tr>
         <tr>
             <td>Password</td>
-            <td><input type="password" name="regpassword"></td>
+            <td><input type="password" name="regpassword"> must have UpperCase + LowerCase + Number with min 6 character</td>
         </tr>
         <tr>
             <td>Confirm Password</td>
@@ -394,11 +402,11 @@ $( document ).ready(function()
         </tr>
         <tr>
             <td>Full Name</td>
-            <td><input type="text" name="regfname"></td>
+            <td><input type="text" name="regfname"> min 3 character</td>
         </tr>""
         <tr>
             <td>Phone Number</td>
-            <td><input type="text" name="regphone"></td>
+            <td><input type="text" name="regphone"> min 3 character</td>
         </tr>
         <tr>
             <td colspan="2" align="center">
