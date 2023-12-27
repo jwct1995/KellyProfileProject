@@ -232,7 +232,7 @@ window.onload = function exampleFunction()
         if(fType==11)
         {
             
-            var eleform=$("<form action='reg.php' method='post' id='listTable'></form>");
+            var eleform=$("<form action='index.php' method='post' id='listTable'></form>");
             var eletbl=$("<table border='1'></table>");
             var eleTR=$("<tr></tr>");
 
@@ -347,13 +347,13 @@ $( document ).ready(function()
     <div>
         <button id="menuregbtn" name="menubtn" >Register</button>
         <button id="menulogbtn" name="menubtn" >Profile Login</button>
-        <form action="reg.php" method="post" id="menuTable" style="display: contents;">
+        <form action="index.php" method="post" id="menuTable" style="display: contents;">
             <input type="submit" name="menuAllProfilebtn" value="AllProfile">
         </form>
     </div>
 <center>
 
-<form action="reg.php" method="post" id="logTable" style="display: none;">
+<form action="index.php" method="post" id="logTable" style="display: none;">
     <table>
     <tr>
             <td colspan="2" align="center">Login Page</td>
@@ -375,7 +375,7 @@ $( document ).ready(function()
     </table>
 </form>
 
-<form action="reg.php" method="post" id="regTable" style="display: none;">
+<form action="index.php" method="post" id="regTable" style="display: none;">
     <table>
         <tr>
             <td colspan="2" align="center">Register Page</td>
@@ -409,7 +409,7 @@ $( document ).ready(function()
     </table>
 </form>
 
-<form action="reg.php" method="post" id="proTable" style="display: none;">
+<form action="index.php" method="post" id="proTable" style="display: none;">
     <table>
         <tr>
             <td colspan="2" align="center">User Profile</td>
