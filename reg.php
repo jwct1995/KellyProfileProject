@@ -5,7 +5,7 @@
 include "db.php";
 
 
-
+    $listarr=0;
     $fType=5;
     $uname=" ";
     if(isset($_POST["regsbtn"]))
@@ -24,7 +24,7 @@ include "db.php";
             $fType=3;
         else
         {
-            $query="INSERT INTO `tbluserloginacc`(`UserId`, `UserName`, `UserPsw`, `UserFname`, `LastLogin`, `UserPhoneNumber`) VALUES ('U".$id."','".$_POST["regemail"]."','".$_POST["regpassword"]."','".$_POST["regfname"]."',' ','".$_POST["regphone"]."')";
+            $query="INSERT INTO `tbluserloginacc`(`UserId`, `UserName`, `UserPsw`, `UserFname`, `LastLogin`, `AccStatus`, `UserPhoneNumber`) VALUES ('U".$id."','".$_POST["regemail"]."','".$_POST["regpassword"]."','".$_POST["regfname"]."',' ','T','".$_POST["regphone"]."')";
             $result=mysqli_query($mysqli,$query);
             if($result==true)
                 $fType=2;
@@ -32,31 +32,115 @@ include "db.php";
                 $fType=4;
         }
     }
-    if(isset($_POST["logsbtn"]))
+    else if(isset($_POST["logsbtn"]))
     {
-        $query="SELECT * FROM `tbluserloginacc` WHERE `UserName`='".$_POST["logemail"]."' and `UserPsw`='".$_POST["logpassword"]."'";	
+        $query="SELECT * FROM `tbluserloginacc` WHERE `UserName`='".$_POST["logemail"]."' AND `UserPsw`='".$_POST["logpassword"]."' ";	
         $sql=mysqli_query($mysqli,$query);
         $row = mysqli_fetch_array($sql, MYSQLI_BOTH);
         $result = mysqli_num_rows($sql);
         if($result==1)
         {
-            $fType=6;
-            /*$row["UserId"];
-            $row["UserName"];
-            $row["UserFname"];
-            $row["UserPhoneNumber"];
-            $row["LastLogin"];*/
+            //echo $row["AccStatus"];
+            if($row["AccStatus"]=="T")
+            {
+                $fType=6;
+                $query="UPDATE `tbluserloginacc` SET `LastLogin`='".DateTime()."' WHERE `UserId`='".$row["UserId"]."'";	
+                $sql=mysqli_query($mysqli,$query);
+            }
+            else if($row["AccStatus"]=="F")
+            {
+                $fType=8;
+            }
 
-            $query="UPDATE `tbluserloginacc` SET `LastLogin`='".DateTime()."' WHERE `UserId`='".$row["UserId"]."'";	
-            $sql=mysqli_query($mysqli,$query);
+            
         }
         else
             $fType=7;
 
 
     }
+    else if(isset($_POST["prosbtn"]))
+    {
+
+        $query="UPDATE `tbluserloginacc` SET `UserFname`='".$_POST["profname"]."',`UserPhoneNumber`='".$_POST["prophone"]."' WHERE `UserId`='".$_POST["prouid"]."'";
+        $sql=mysqli_query($mysqli,$query);
+        if($sql==true)
+            $fType=9;
+        else
+            $fType=10;
+    }
+    else if(isset($_POST["menuAllProfilebtn"]))
+    {
+        $c=0;
+        $query="SELECT * FROM `tbluserloginacc`";	
+        $sql=mysqli_query($mysqli,$query);
+       // $row = mysqli_fetch_array($sql, MYSQLI_BOTH);
+        $result = mysqli_num_rows($sql);
+        if($result>=1)
+        {
+            $listarr=1;
+            $fType=11;
+        }
+    }
+    else if(isset($_POST["listsbtn"]))
+    {
+        //print_r($_POST);
+        //var_dump($_POST);
+        $statusUserId=$_POST;
+        //echo $statusUserId["listsbtn"];
+        $statusUserId=$statusUserId["listsbtn"];
+        //echo $statusUserId;
+        
+        $query="SELECT * FROM `tbluserloginacc` WHERE `UserId`='".$statusUserId."' ";	
+        $sql=mysqli_query($mysqli,$query);
+        $row = mysqli_fetch_array($sql, MYSQLI_BOTH);
+        $result = mysqli_num_rows($sql);
+        if($result==1)
+        {
+            $userstatus="";
+            if($row["AccStatus"]=="T")
+                $userstatus="F";
+            else if($row["AccStatus"]=="F")
+                $userstatus="T";
+
+            
+            $query="UPDATE `tbluserloginacc` SET `AccStatus`='".$userstatus."' WHERE `UserId`='".$statusUserId."'";
+            $sql=mysqli_query($mysqli,$query);
+            if($sql==true)
+            {
+                if($row["AccStatus"]=="T")
+                    $fType=12;
+                if($row["AccStatus"]=="F")
+                    $fType=13;
+            }   
+            else
+            {
+                if($row["AccStatus"]=="T")
+                    $fType=14;
+                if($row["AccStatus"]=="F")
+                    $fType=15;
+            }
+        }
+
+
+        
+    }
     
 
+		
+
+    
+
+//`UserId`, `UserName`, `UserPsw`, `UserFname`, `LastLogin`, `AccStatus`, `UserPhoneNumber`
+/*
+            $row["UserId"];
+            $row["UserName"];
+            $row["UserPsw"];
+            $row["UserFname"];
+            $row["LastLogin"];
+            $row["AccStatus"];
+            $row["UserPhoneNumber"];
+            */
 
 
 /////////////////////////////////////////////////////////
@@ -86,24 +170,117 @@ include "db.php";
 var fType=<?php echo $fType;?>;
 var uname="<?php echo $uname;?>";
 
+
+<?php 
+if($listarr==1)
+{
+    echo"var listarr=";
+    echo"[";
+    $c=0;
+	while ($row = mysqli_fetch_array($sql, MYSQLI_BOTH)) 
+	{
+		echo"['".$row["UserId"]."','".$row["UserName"]."','".$row["UserFname"]."','".$row["LastLogin"]."','".$row["AccStatus"]."','".$row["UserPhoneNumber"]."']";
+        if($c<$result-1)
+            echo",";
+        $c++;
+    }
+/*
+    for($c=0;$c<$result;$c++)
+    {
+        echo"['".$row["UserId"]."','".$row["UserName"]."','".$row["UserFname"]."','".$row["LastLogin"]."','".$row["AccStatus"]."','".$row["UserPhoneNumber"]."']";
+        if($c<$result-1)
+            echo",";
+    }*/
+    echo"];";
+
+}
+?>
+
 window.onload = function exampleFunction()
 {
     
 
     if(fType==1)
         $("#regTable").css("display","unset");
-    if(fType==2 || fType==3 || fType==4 || fType==7)
+    if(fType==2 || fType==3 || fType==4 || fType==7 || fType==8 || fType==9 || fType==10|| fType==11|| fType==12|| fType==13)
     {
-        $("#regStatus").css("display","unset");
+        $("#StatusDisplayPage").css("display","unset");
 
         if(fType==2)
-            $("#regStatus").html("Your ID \""+uname+"\" is register Success.");
+            $("#StatusDisplayPage").html("Your ID \""+uname+"\" is register Success.");
         if(fType==3)
-            $("#regStatus").html("Register Fail .\nYour ID \""+uname+"\" is registed by other user.");
+            $("#StatusDisplayPage").html("Register Fail .\nYour ID \""+uname+"\" is registed by other user.");
         if(fType==4)
-            $("#regStatus").html("Register Fail some other error.");
+            $("#StatusDisplayPage").html("Register Fail some other error.");
         if(fType==7)
-            $("#regStatus").html("Login Fail.");
+            $("#StatusDisplayPage").html("Login Fail.");
+        if(fType==8)
+            $("#StatusDisplayPage").html("Yout account is Disable.");
+        if(fType==9)
+            $("#StatusDisplayPage").html("Yout account is updated.");
+        if(fType==10)
+            $("#StatusDisplayPage").html("Yout account is update fail.");
+        if(fType==12)
+            $("#StatusDisplayPage").html("Success to block that account.");
+        if(fType==13)
+            $("#StatusDisplayPage").html("Success to active that account.");
+        if(fType==14)
+            $("#StatusDisplayPage").html("Fail block that account.");
+        if(fType==15)
+            $("#StatusDisplayPage").html("Fail active that account.");
+
+        if(fType==11)
+        {
+            
+            var eleform=$("<form action='reg.php' method='post' id='listTable'></form>");
+            var eletbl=$("<table border='1'></table>");
+            var eleTR=$("<tr></tr>");
+
+            var eleTH1=$("<th>ID</th>");
+            var eleTH2=$("<th>Email</th>");
+            var eleTH3=$("<th>Full Name</th>");
+            var eleTH4=$("<th>Last Login</th>");
+            var eleTH5=$("<th>Status</th>");
+            var eleTH6=$("<th>Phone Number</th>");
+            var eleTH7=$("<th>Status On/Off</th>");
+            
+            $("#StatusDisplayPage").append(eleform);
+            eleform.append(eletbl);
+            eletbl.append(eleTR);
+            eleTR.append(eleTH1);
+            eleTR.append(eleTH2);
+            eleTR.append(eleTH3);
+            eleTR.append(eleTH4);
+            eleTR.append(eleTH5);
+            eleTR.append(eleTH6);
+            eleTR.append(eleTH7);
+            <?php
+            if($listarr==1)
+            {
+            ?>
+                var ccount=0;
+                for(var c=0;c<listarr.length;c++)
+                {
+
+                    var btntxt="";
+                    var ustatus="";
+                    if(listarr[c][4]=="T")
+                    {
+                        ustatus="Active";
+                        btntxt="Block";
+                    }
+                    else if(listarr[c][4]=="F")
+                    {
+                        ustatus="Block";
+                        btntxt="Active";
+                    }
+
+                    eletbl.append("<tr><td>"+listarr[c][0]+"</td><td>"+listarr[c][1]+"</td><td>"+listarr[c][2]+"</td><td>"+listarr[c][3]+"</td><td>"+ustatus+"</td><td>"+listarr[c][5]+"</td><td><button id='"+listarr[c][0]+"' name='listsbtn' value='"+listarr[c][0]+"'>"+btntxt+"</button></td></tr>");
+                }
+            <?php
+            }
+            ?>
+        }
     }
         
     if(fType==5)
@@ -117,6 +294,7 @@ window.onload = function exampleFunction()
     {
     ?>
         $("[name='proid']").val("<?php echo$row["UserId"]; ?>");
+        $("[name='prouid']").val("<?php echo$row["UserId"]; ?>");
         $("[name='proemail']").val("<?php echo$row["UserName"]; ?>");
         $("[name='profname']").val("<?php echo$row["UserFname"]; ?>");
         $("[name='prophone']").val("<?php echo$row["UserPhoneNumber"]; ?>");
@@ -151,7 +329,7 @@ $( document ).ready(function()
 
     $("body").on("click", "[name='menubtn']", function()
     {
-        $("#logTable , #regTable , #proTable , #regStatus" ).css("display","none");
+        $("#logTable , #regTable , #proTable , #StatusDisplayPage" ).css("display","none");
 
         var eleID=$(this).attr("id");
 
@@ -164,10 +342,14 @@ $( document ).ready(function()
 
 </script>
 </head>
+
 <body>
     <div>
         <button id="menuregbtn" name="menubtn" >Register</button>
         <button id="menulogbtn" name="menubtn" >Profile Login</button>
+        <form action="reg.php" method="post" id="menuTable" style="display: contents;">
+            <input type="submit" name="menuAllProfilebtn" value="AllProfile">
+        </form>
     </div>
 <center>
 
@@ -227,16 +409,14 @@ $( document ).ready(function()
     </table>
 </form>
 
-<div id="regStatus"></div>
-
-<form id="proTable" style="display: none;">
+<form action="reg.php" method="post" id="proTable" style="display: none;">
     <table>
         <tr>
             <td colspan="2" align="center">User Profile</td>
         </tr>
         <tr>
             <td>uid</td>
-            <td><input type="text" name="proid" disabled></td>
+            <td><input type="text" name="proid" disabled><input type="text" name="prouid" style="display: none;"></td>
         </tr>
         <tr>
             <td>Email</td>
@@ -244,20 +424,23 @@ $( document ).ready(function()
         </tr>
         <tr>
             <td>Full Name</td>
-            <td><input type="text" name="profname" disabled></td>
+            <td><input type="text" name="profname" ></td>
         </tr>""
         <tr>
             <td>Phone Number</td>
-            <td><input type="text" name="prophone" disabled></td>
+            <td><input type="text" name="prophone" ></td>
         </tr>
         <tr>
             <td>Last Login</td>
             <td><input type="text" name="prologin" disabled></td>
         </tr>
+        <td colspan="2" align="center">
+                <input type="submit" name="prosbtn">
+        </td>
     </table>
 </form>
 
-
+<div id="StatusDisplayPage"></div>
 </center>
 </body>
 </html>

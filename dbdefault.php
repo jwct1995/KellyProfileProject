@@ -27,6 +27,7 @@ if($conn->connect_error)
 	UserPsw VARCHAR(32),
 	UserFname VARCHAR(100),
 	LastLogin VARCHAR(25),
+	AccStatus CHAR(1),
 	UserPhoneNumber VARCHAR(20)
 	)"
 
